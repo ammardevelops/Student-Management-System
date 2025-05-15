@@ -71,9 +71,14 @@ export type StudentFilter = z.infer<typeof StudentFilterSchema>;
 export type StudentProps = z.infer<typeof StudentSchema>;
 
 export type StudentPropsWithId = StudentProps & { id: number };
-export type GetStudentDetailProps = StudentPropsWithId & { reporterName: string };
+export type GetStudentDetailProps = {
+  success: boolean;
+  data: StudentPropsWithId & { reporterName: string };
+};
 export type StudentData = {
-  students: UserAccountBasicProps[];
+  data: {
+    students: UserAccountBasicProps[];
+  };
 };
 
 export type StudentDetail = {

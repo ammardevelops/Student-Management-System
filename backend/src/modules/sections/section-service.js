@@ -3,9 +3,11 @@ const { getAllSections, getSectionById, updateSectionById, deleteSectionById, ad
 
 const processGetAllSections = async () => {
     const sections = await getAllSections();
-    if (sections.length <= 0) {
-        throw new ApiError(404, "Sections not found");
-    }
+
+    // Removed error status code 404, because it will return empty array if no data
+    // if (sections.length <= 0) {
+    //     throw new ApiError(404, "Sections not found");
+    // }
 
     return sections;
 }

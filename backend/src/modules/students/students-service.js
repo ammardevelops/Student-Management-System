@@ -11,9 +11,11 @@ const checkStudentId = async (id) => {
 
 const getAllStudents = async (payload) => {
     const students = await findAllStudents(payload);
-    if (students.length <= 0) {
-        throw new ApiError(404, "Students not found");
-    }
+
+    // Removed error status code 404, because it will return empty array if no data
+    // if (students.length <= 0) {
+    //     throw new ApiError(404, "Students not found");
+    // }
 
     return students;
 }
@@ -33,29 +35,33 @@ const addNewStudent = async (payload) => {
     const ADD_STUDENT_AND_EMAIL_SEND_SUCCESS = "Student added and verification email sent successfully.";
     const ADD_STUDENT_AND_BUT_EMAIL_SEND_FAIL = "Student added, but failed to send verification email.";
     try {
+        console.log('Payload being sent to addOrUpdateStudent:', JSON.stringify(payload, null, 2));
         const result = await addOrUpdateStudent(payload);
-        if (!result.status) {
-            throw new ApiError(500, result.message);
+        console.log('Result from addOrUpdateStudent:', JSON.stringify(result, null, 2));
+        
+        if (!result[0]?.status) {
+            throw new ApiError(500, result[0]?.message || "Unable to add student");
         }
 
         try {
-            await sendAccountVerificationEmail({ userId: result.userId, userEmail: payload.email });
+            await sendAccountVerificationEmail({ userId: result[0].userId, userEmail: payload.email });
             return { message: ADD_STUDENT_AND_EMAIL_SEND_SUCCESS };
         } catch (error) {
             return { message: ADD_STUDENT_AND_BUT_EMAIL_SEND_FAIL }
         }
     } catch (error) {
+        console.log('Error in addNewStudent:', error);
         throw new ApiError(500, "Unable to add student");
     }
 }
 
 const updateStudent = async (payload) => {
     const result = await addOrUpdateStudent(payload);
-    if (!result.status) {
-        throw new ApiError(500, result.message);
+    if (!result[0]?.status) {
+        throw new ApiError(500, result[0]?.message || "Unable to update student");
     }
 
-    return { message: result.message };
+    return { message: result[0].message };
 }
 
 const setStudentStatus = async ({ userId, reviewerId, status }) => {

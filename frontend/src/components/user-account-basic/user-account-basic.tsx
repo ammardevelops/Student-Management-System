@@ -45,12 +45,12 @@ export const UserAccountBasic = ({ data }: { data: UserAccountBasicDataProps }) 
       {
         accessorKey: 'systemAccess',
         header: 'System Access',
-        Cell: ({ cell }) => <>{cell.getValue<boolean>().toString()}</>
+        Cell: ({ cell }) => <>{cell.getValue<boolean>()?.toString() ?? 'false'}</>
       },
       {
         accessorKey: 'lastLogin',
         header: 'Last Login',
-        Cell: ({ cell }) => <>{getFormattedDate(cell.getValue<string>(), DATE_TIME_24_HR_FORMAT)}</>
+        Cell: ({ cell }) => <>{cell.getValue<string>() ? getFormattedDate(cell.getValue<string>(), DATE_TIME_24_HR_FORMAT) : '-'}</>
       }
     ],
     []

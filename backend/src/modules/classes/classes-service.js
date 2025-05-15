@@ -3,9 +3,11 @@ const { getAllClasses, getClassDetail, addNewClass, updateClassDetailById, delet
 
 const fetchAllClasses = async () => {
     const classes = await getAllClasses();
-    if (!Array.isArray(classes) || classes.length <= 0) {
-        throw new ApiError(404, "Classes not found");
-    }
+
+    // Removed error status code 404, because it will return empty array if no data
+    // if (!Array.isArray(classes) || classes.length <= 0) {
+    //     throw new ApiError(404, "Classes not found");
+    // }
 
     return classes;
 }

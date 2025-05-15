@@ -45,9 +45,9 @@ export const StudentAccountEdit: React.FC<StudentAccountEditProps> = ({
   const studentDetail = useGetStudentDetail(id);
 
   React.useEffect(() => {
-    if (studentDetail) {
+    if (studentDetail?.data) {
       const { setValue } = methods;
-      for (const [key, value] of Object.entries(studentDetail) as [
+      for (const [key, value] of Object.entries(studentDetail.data) as [
         keyof StudentProps,
         StudentDetailValue<StudentProps>
       ][]) {
@@ -57,6 +57,7 @@ export const StudentAccountEdit: React.FC<StudentAccountEditProps> = ({
           setValue(key, value);
         }
       }
+      console.log('Form values after setting:', methods.getValues());
     }
   }, [studentDetail, methods]);
 

@@ -13,6 +13,7 @@ import { StudentFilter, StudentFilterSchema } from '../types';
 import { FilterStudent } from '../components/forms';
 import { UserAccountBasic } from '@/components/user-account-basic';
 import { useGetStudentsQuery } from '../api/student-api';
+import { useEffect } from 'react';
 
 const initialState = {
   class: '',
@@ -33,6 +34,10 @@ export const ListStudents: React.FC = () => {
   const searchStudent = (payload: StudentFilter) => {
     setFilter(payload);
   };
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   return (
     <>
@@ -59,7 +64,7 @@ export const ListStudents: React.FC = () => {
           isLoading,
           isError,
           error: getErrorMsg(error as FetchBaseQueryError | SerializedError).message,
-          users: data?.students || []
+          users: data?.data?.students || []
         }}
       />
     </>

@@ -11,33 +11,51 @@ const findAllStudents = async (payload) => {
     const { name, className, section, roll } = payload;
     let query = `
         SELECT
-            t1.id,
-            t1.name,
-            t1.email,
-            t1.last_login AS "lastLogin",
-            t1.is_active AS "systemAccess"
-        FROM users t1
-        LEFT JOIN user_profiles t3 ON t1.id = t3.user_id
-        WHERE t1.role_id = 3`;
+            u.id,
+            u.name,
+            u.email,
+            u.is_active AS "systemAccess",
+            u.last_login AS "lastLogin",
+            p.phone,
+            p.gender,
+            p.dob,
+            p.class_name AS "class",
+            p.section_name AS "section",
+            p.roll,
+            p.father_name AS "fatherName",
+            p.father_phone AS "fatherPhone",
+            p.mother_name AS "motherName",
+            p.mother_phone AS "motherPhone",
+            p.guardian_name AS "guardianName",
+            p.guardian_phone AS "guardianPhone",
+            p.relation_of_guardian AS "relationOfGuardian",
+            p.current_address AS "currentAddress",
+            p.permanent_address AS "permanentAddress",
+            p.admission_dt AS "admissionDate",
+            r.name as "reporterName"
+        FROM users u
+        LEFT JOIN user_profiles p ON u.id = p.user_id
+        LEFT JOIN users r ON u.reporter_id = r.id
+        WHERE u.role_id = 3`;
     let queryParams = [];
     if (name) {
-        query += ` AND t1.name = $${queryParams.length + 1}`;
-        queryParams.push(name);
+        query += ` AND u.name ILIKE $${queryParams.length + 1}`;
+        queryParams.push(`%${name}%`);
     }
     if (className) {
-        query += ` AND t3.class_name = $${queryParams.length + 1}`;
-        queryParams.push(className);
+        query += ` AND p.class_name ILIKE $${queryParams.length + 1}`;
+        queryParams.push(`%${className}%`);
     }
     if (section) {
-        query += ` AND t3.section_name = $${queryParams.length + 1}`;
-        queryParams.push(section);
+        query += ` AND p.section_name ILIKE $${queryParams.length + 1}`;
+        queryParams.push(`%${section}%`);
     }
     if (roll) {
-        query += ` AND t3.roll = $${queryParams.length + 1}`;
+        query += ` AND p.roll = $${queryParams.length + 1}`;
         queryParams.push(roll);
     }
 
-    query += ' ORDER BY t1.id';
+    query += ' ORDER BY u.id';
 
     const { rows } = await processDBRequest({ query, queryParams });
     return rows;
@@ -47,7 +65,7 @@ const addOrUpdateStudent = async (payload) => {
     const query = "SELECT * FROM student_add_update($1)";
     const queryParams = [payload];
     const { rows } = await processDBRequest({ query, queryParams });
-    return rows[0];
+    return rows;
 }
 
 const findStudentDetail = async (id) => {
